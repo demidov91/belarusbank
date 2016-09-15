@@ -4,7 +4,7 @@ from requests import Session
 from lxml import html
 import os
 
-from settings import HOST, USERNAME, PASSWORD, BASE_DIR
+from settings import BB_HOST, BB_USERNAME, BB_PASSWORD, BASE_DIR
 
 import logging
 logger = logging.getLogger(__name__)
@@ -17,16 +17,16 @@ def get_key(number: str) -> str:
 
 def log_in():
     s = Session()
-    response = s.get(HOST + '/wps/portal/ibank/')
+    response = s.get(BB_HOST + '/wps/portal/ibank/')
     if response.status_code >= 400:
         logger.debug(response.status_code)
         return None
     doc = html.fromstring(response.text.encode('utf-8'))
 
     action = doc.cssselect('form.loginForm')[0].get('action')
-    login_step_one_response = s.post(HOST + action, data={
-        'bbIbUseridField': USERNAME,
-        'bbIbPasswordField': PASSWORD,
+    login_step_one_response = s.post(BB_HOST + action, data={
+        'bbIbUseridField': BB_USERNAME,
+        'bbIbPasswordField': BB_PASSWORD,
         'bbIbLoginAction': 'in-action',
     })
     logger.debug(login_step_one_response)
@@ -43,7 +43,7 @@ def log_in():
     }
     for field in ('field_1', 'field_2', 'field_3', 'field_4', 'field_5'):
         login_step_two_request[field] = doc.cssselect('form input[name={}]'.format(field))[0].get('value')
-    login_step_two_response = s.post(HOST + action, data=login_step_two_request)
+    login_step_two_response = s.post(BB_HOST + action, data=login_step_two_request)
     logger.debug('Login, step 2 response code is {}'.format(login_step_two_response.status_code))
     if login_step_two_response.status_code >= 400:
         return None
@@ -52,7 +52,7 @@ def log_in():
 def from_index_to_cards(s, index_page):
     doc = html.fromstring(index_page)
     cards_page_url = doc.cssselect('#leftNavMenu>ul>li')[0].cssselect('a')[0].get('href')
-    cards_page_response = s.get(HOST + cards_page_url)
+    cards_page_response = s.get(BB_HOST + cards_page_url)
     logger.debug('Cards page response status is {}'.format(cards_page_response.status_code))
     if cards_page_response.status_code >= 400:
         return None
@@ -73,7 +73,7 @@ def parse_for_cards_balance(cards_page):
             logger.exception('Fail')
 
 
-def get_cards_balance() -> list:
+def get_bb_cards_balance() -> list:
     """
     Makes, actually, all the application work.
     """
