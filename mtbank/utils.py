@@ -25,7 +25,7 @@ def overview():
     products = []
     for product in html.fromstring(resp.content).cssselect('.bank-product'):
         products.append({
-            'name': product.cssselect('.product-title>a')[0].text,
+            'card': product.cssselect('.product-title>a')[0].text,
             'balance': product.cssselect('.balance-table .summ.balance')[0].text,
             'currency': product.cssselect('.balance-table .currency')[0].text,
         })

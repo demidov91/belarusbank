@@ -5,3 +5,4 @@ keys.json
 .idea
 env
 *.log
+build/
