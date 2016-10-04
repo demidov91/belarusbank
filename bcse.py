@@ -22,5 +22,6 @@ def get_data():
         time = tr[0][1].tail.strip()
         rate = tr[1].text.strip()
         diff = tr[2][1][0].text.strip()
+        diff = diff[0] + diff[1:].strip()
         rates[currency] = '{} ({}) ({})'.format(rate, diff, time)
     return rates
