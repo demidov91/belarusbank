@@ -1,4 +1,3 @@
-from functools import wraps
 from flask import Flask, jsonify
 
 from settings import EXTREMELY_SIMPLE_KEY, DEBUG
