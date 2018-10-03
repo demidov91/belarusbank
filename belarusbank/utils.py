@@ -1,12 +1,14 @@
 import json
-import re
-from requests import Session
-from lxml import html
-import os
-
-from settings import BB_HOST, BB_USERNAME, BB_PASSWORD, BASE_DIR
-
 import logging
+import os
+import re
+
+from lxml import html
+from requests import Session
+
+from constants import BB_HOST
+from settings import BB_USERNAME, BB_PASSWORD, BASE_DIR
+
 logger = logging.getLogger(__name__)
 
 

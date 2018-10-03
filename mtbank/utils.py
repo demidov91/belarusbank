@@ -1,17 +1,20 @@
+import json
+import logging
+
 import requests
 from lxml import html
 
-from settings import MTB_USERNAME, MTB_PASSWORD, MTB_HOST
+from constants import MTB_HOST
+from passwords.utils import get_credentials
 
-import logging
 logger = logging.getLogger(__name__)
 
 
-def overview():
+def overview(username, password):
     client = requests.session()
     resp = client.post(MTB_HOST + '/ib/site/login', data={
-        'name': MTB_USERNAME,
-        'password': MTB_PASSWORD,
+        'name': username,
+        'password': password,
     })
     logger.debug('Login status {}'.format(resp.status_code))
     if resp.status_code != 200:
@@ -40,5 +43,28 @@ def overview():
     }
 
 
+def _redirect_to_auth(*, next: str, reason: str):
+    return {
+        'statusCode': 302,
+        'headers': {
+            'Location': f'auth?next={next}&reason={reason}',
+        },
+        'body': '',
+    }
+
+
 def serverless_overview(event, context):
-    pass
+    if 'headers' not in event or 'cookie' not in event['headers']:
+        return _redirect_to_auth(next='/mtb', reason='no-password')
+
+    cookie = dict(x.split('=') for x in event['headers']['cookie'].split(';'))
+
+    if 'sessionId' not in cookie or 'encryptKey' not in cookie:
+        return _redirect_to_auth(next='/mtb', reason='no-password')
+
+    username, password = get_credentials(cookie['sessionId'], cookie['encryptKey'])
+
+    return {
+        'statusCode': 200,
+        'body': json.dumps(overview(username, password)),
+    }

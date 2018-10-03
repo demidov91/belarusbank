@@ -1,4 +1,3 @@
--r bcse/requirements.in
 -r belarusbank/requirements.in
 -r mtbank/requirements.in
 flask

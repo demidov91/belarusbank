@@ -6,28 +6,64 @@ provider:
   region: eu-central-1
 
 package:
-  individually: true
+  include:
+    - mtbank/**
+    - passwords/**
+    - bcse/**
+    - constants.py
+  exclude:
+    - ./**
 
 custom:
   pythonRequirements:
+    fileName: requirements-serverless.txt
     pythonBin: python
     useDownloadCache: true
-    useStaticCache: true
 
 functions:
   bcse:
-    handler: utils.sls_get_data
-    module: bcse
-    package:
-      include:
-        - bcse/utils.py
-      exclude:
-        - bcse/**
-
+    handler: bcse.utils.sls_get_data
     events:
       - http:
           path: bcse
           method: get
+
+  mtbank:
+    handler: mtbank.utils.serverless_overview
+    events:
+      - http:
+          path: mtb
+          method: get
+
+resources:
+  Resources:
+
+    PasswordsTable:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        TableName: passwords-${self:provider.stage}
+        AttributeDefinitions:
+          - AttributeName: id
+            AttributeType: S
+        KeySchema:
+          - AttributeName: id
+            KeyType: HASH
+        ProvisionedThroughput:
+          ReadCapacityUnits: 1
+          WriteCapacityUnits: 1
+
+iamRoleStatements:
+  - Effect: Allow
+    Action:
+      - dynamodb:DescribeTable
+      - dynamodb:Query
+      - dynamodb:Scan
+      - dynamodb:GetItem
+      - dynamodb:PutItem
+      - dynamodb:UpdateItem
+      - dynamodb:DeleteItem
+    Resource:
+      - "Fn::GetAtt": [ PasswordsTable, Arn ]
 
 
 plugins:

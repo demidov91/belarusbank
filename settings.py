@@ -1,8 +1,5 @@
 import os
 
-BB_HOST = 'https://ibank.asb.by'
-MTB_HOST = 'https://new.mybank.by'
-
 BB_USERNAME = ''
 BB_PASSWORD = ''
 

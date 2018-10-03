@@ -3,6 +3,7 @@ from flask import Flask, jsonify
 from bcse.utils import get_data as get_bcse_data
 from belarusbank.utils import get_bb_cards_balance
 from mtbank.utils import overview as mtb_overview
+from passwords.utils import get_credentials
 from settings import EXTREMELY_SIMPLE_KEY, DEBUG
 
 app = Flask(__name__)
@@ -17,7 +18,7 @@ def bb_balance():
 
 @app.route('/balance/' + EXTREMELY_SIMPLE_KEY + '/mtb/')
 def mtb_balance():
-    return jsonify(mtb_overview())
+    return jsonify(mtb_overview(*get_credentials(None, None)))
 
 
 @app.route('/bcse/')
