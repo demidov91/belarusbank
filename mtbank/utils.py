@@ -39,3 +39,6 @@ def overview():
         'depo': depo,
     }
 
+
+def serverless_overview(event, context):
+    pass

@@ -1,5 +1,7 @@
 import datetime
+import json
 from urllib.request import urlopen, Request
+
 from xml.etree import ElementTree as ET
 
 
@@ -25,3 +27,12 @@ def get_data():
         diff = diff[0] + diff[1:].strip()
         rates[currency] = '{} ({}) ({})'.format(rate, diff, time)
     return rates
+
+
+def sls_get_data(event, context):
+    return {
+        'isBase64Encoded': False,
+        "statusCode": 200,
+        "headers": {},
+        'body': json.dumps(get_data()),
+    }

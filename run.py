@@ -1,4 +1,4 @@
-from utils import get_key, get_bb_cards_balance
+from belarusbank.utils import get_bb_cards_balance
 
 
 def run():

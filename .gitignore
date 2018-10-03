@@ -4,5 +4,8 @@ keys.json
 *~
 .idea
 env
+*-env
 *.log
 build/
+node_modules/
+.serverless/

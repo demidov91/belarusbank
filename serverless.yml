@@ -1,0 +1,34 @@
+service: banktool
+
+provider:
+  name: aws
+  runtime: python3.6
+  region: eu-central-1
+
+package:
+  individually: true
+
+custom:
+  pythonRequirements:
+    pythonBin: python
+    useDownloadCache: true
+    useStaticCache: true
+
+functions:
+  bcse:
+    handler: utils.sls_get_data
+    module: bcse
+    package:
+      include:
+        - bcse/utils.py
+      exclude:
+        - bcse/**
+
+    events:
+      - http:
+          path: bcse
+          method: get
+
+
+plugins:
+  - serverless-python-requirements
