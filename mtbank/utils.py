@@ -54,13 +54,22 @@ def _redirect_to_auth(*, next: str, reason: str):
 
 
 def serverless_overview(event, context):
-    if 'headers' not in event or 'cookie' not in event['headers']:
-        return _redirect_to_auth(next='/mtb', reason='no-password')
+    if 'headers' not in event or 'Cookie' not in event['headers']:
+        logger.info('No cookie')
+        return _redirect_to_auth(next='mtb', reason='no-password')
 
-    cookie = dict(x.split('=') for x in event['headers']['cookie'].split(';'))
+    cookie = dict(
+        x.split('=')
+        for x in (
+            one_cookie.strip()
+            for one_cookie in event['headers']['Cookie'].split(';')
+            if '=' in one_cookie
+        )
+    )
 
     if 'sessionId' not in cookie or 'encryptKey' not in cookie:
-        return _redirect_to_auth(next='/mtb', reason='no-password')
+        logger.info('No session')
+        return _redirect_to_auth(next='mtb', reason='no-password')
 
     username, password = get_credentials(cookie['sessionId'], cookie['encryptKey'])
 

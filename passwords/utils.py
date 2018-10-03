@@ -7,6 +7,7 @@ def get_credentials(session_id: str, encrypt_key: str):
 def serverless_get_password(event, context):
     return {
         'statusCode': 200,
+        'headers': {'Content-Type': 'text/html', },
         'body': open('passwords/simple_password_form.html', mode='r').read(),
     }
 
