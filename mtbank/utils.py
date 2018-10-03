@@ -1,5 +1,6 @@
 import json
 import logging
+from http.cookies import SimpleCookie
 
 import requests
 from lxml import html
@@ -58,20 +59,13 @@ def serverless_overview(event, context):
         logger.info('No cookie')
         return _redirect_to_auth(next='mtb', reason='no-password')
 
-    cookie = dict(
-        x.split('=')
-        for x in (
-            one_cookie.strip()
-            for one_cookie in event['headers']['Cookie'].split(';')
-            if '=' in one_cookie
-        )
-    )
+    cookie = SimpleCookie(event['headers']['Cookie'])
 
     if 'sessionId' not in cookie or 'encryptKey' not in cookie:
         logger.info('No session')
         return _redirect_to_auth(next='mtb', reason='no-password')
 
-    username, password = get_credentials(cookie['sessionId'], cookie['encryptKey'])
+    username, password = get_credentials(cookie['sessionId'].value, cookie['encryptKey'].value)
 
     return {
         'statusCode': 200,

@@ -4,6 +4,21 @@ provider:
   name: aws
   runtime: python3.6
   region: eu-central-1
+  environment:
+    STAGE: ${self:provider.stage}
+  iamRoleStatements:
+  - Effect: Allow
+    Action:
+      - dynamodb:DescribeTable
+      - dynamodb:Query
+      - dynamodb:Scan
+      - dynamodb:GetItem
+      - dynamodb:PutItem
+      - dynamodb:UpdateItem
+      - dynamodb:DeleteItem
+    Resource:
+      - "Fn::GetAtt": [ PasswordsTable, Arn ]
+
 
 package:
   include:
@@ -51,9 +66,9 @@ functions:
 
 resources:
   Resources:
-
     PasswordsTable:
       Type: AWS::DynamoDB::Table
+      DeletionPolicy: Retain
       Properties:
         TableName: passwords-${self:provider.stage}
         AttributeDefinitions:
@@ -66,18 +81,7 @@ resources:
           ReadCapacityUnits: 1
           WriteCapacityUnits: 1
 
-iamRoleStatements:
-  - Effect: Allow
-    Action:
-      - dynamodb:DescribeTable
-      - dynamodb:Query
-      - dynamodb:Scan
-      - dynamodb:GetItem
-      - dynamodb:PutItem
-      - dynamodb:UpdateItem
-      - dynamodb:DeleteItem
-    Resource:
-      - "Fn::GetAtt": [ PasswordsTable, Arn ]
+
 
 
 plugins:

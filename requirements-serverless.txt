@@ -4,17 +4,21 @@
 #
 #    pip-compile --output-file requirements-serverless.txt requirements-serverless.in
 #
+asn1crypto==0.24.0        # via cryptography
 boto3==1.9.16
 botocore==1.12.16         # via boto3, s3transfer
 certifi==2018.8.24        # via requests
+cffi==1.11.5              # via cryptography
 chardet==3.0.4            # via requests
+cryptography==2.3.1
 cssselect==1.0.3
 docutils==0.14            # via botocore
-idna==2.7                 # via requests
+idna==2.7                 # via cryptography, requests
 jmespath==0.9.3           # via boto3, botocore
 lxml==4.2.5
+pycparser==2.19           # via cffi
 python-dateutil==2.7.3    # via botocore
 requests==2.19.1
 s3transfer==0.1.13        # via boto3
-six==1.11.0               # via python-dateutil
+six==1.11.0               # via cryptography, python-dateutil
 urllib3==1.23             # via botocore, requests
