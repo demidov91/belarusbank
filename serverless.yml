@@ -33,9 +33,10 @@ package:
 
 custom:
   pythonRequirements:
-    fileName: requirements-serverless.txt
+    fileName: requirements/serverless.txt
     pythonBin: python
     useDownloadCache: true
+    cacheLocation: .serverless/.cache
 
 functions:
   bcse:

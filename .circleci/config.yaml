@@ -1,0 +1,65 @@
+version: 2
+jobs:
+  deploy:
+    docker:
+     - image: circleci/python:3.6.6-stretch-node-browsers
+    steps:
+     - checkout
+
+     - run:
+      name: Create requirements.txt
+      command: |
+        python3.6 -m venv env
+        . env/bin/activate
+        pip install pip-tools
+        pip-compile requirements/dev.in
+        pip-compile requirements/serverless.in
+
+     - restore_cache:
+      name: Restore venv.
+      key: dev-python3.6.6-v1-{{ checksum requirements/dev.txt }}
+
+     - run:
+      name: Install python dependencies.
+      command: |
+        python3.6 -m venv env
+        . env/bin/activate
+        pip install -r requirements/dev.txt
+
+     - save_cache:
+      name: Save venv.
+      key: dev-python3.6.6-v1-{{ checksum requirements/dev.txt }}
+      paths:
+       - env
+
+     - run:
+      name: pytest
+      command: |
+        . env/bin/activate
+        pytest
+
+     - run:
+      name: Install and prepare serverless.
+      command: |
+        sudo npm i -g serverless
+        npm install
+        mkdir .serverless
+
+     - restore_cache:
+      name: Restore serverless cache.
+      key: sls-python3.6.6-v1-{{ checksum requirements/serverless.txt }}
+
+     - run:
+      name: Packge.
+      command: |
+        . env/bin/activate
+        serverless package -s dev
+
+     - save_cache:
+      name: Save serverless cache.
+      key: sls-python3.6.6-v1-{{ checksum requirements/serverless.txt }}
+      path: .serverless/.cache
+
+     - run:
+      name: Deploy to dev.
+      command: serverless deploy -s dev
