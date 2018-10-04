@@ -36,7 +36,7 @@ jobs:
          name: pytest
          command: |
            . env/bin/activate
-           pytest
+           python -m pytest
 
      - run:
          name: Install and prepare serverless.
