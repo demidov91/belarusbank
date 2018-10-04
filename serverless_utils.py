@@ -22,7 +22,11 @@ def json_response(data: dict) -> dict:
 def no_trailing_slash(wrapped):
     @wraps(wrapped)
     def wrapper(event, context):
-        if 'path' in event['requestContext'] and event['requestContext']['path'].endswith('/'):
+        if (
+            'requestContext' in event and
+            'path' in event['requestContext'] and
+            event['requestContext']['path'].endswith('/')
+        ):
             return redirect_response_302(event['requestContext']['path'][:-1])
 
         return wrapped(event, context)

@@ -51,8 +51,6 @@ def _redirect_to_auth(*, next: str, reason: str):
 
 @no_trailing_slash
 def serverless_overview(event, context):
-    logger.debug(event)
-
     if 'headers' not in event or 'Cookie' not in event['headers']:
         logger.info('No cookie')
         return _redirect_to_auth(next='mtb', reason='no-password')

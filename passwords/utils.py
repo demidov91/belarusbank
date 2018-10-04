@@ -18,7 +18,12 @@ logger = logging.getLogger(__name__)
 def get_credentials(session_id: str, encrypt_key: str) -> Tuple[Optional[str], Optional[str]]:
     table = _get_passwords_table()
     try:
-        item = table.get_item(Key={'id': session_id})['Item']
+        item = table.update_item(
+            Key={'id': session_id},
+            UpdateExpression='SET last_accessed_at = :current_time',
+            ExpressionAttributeValues={':current_time': datetime.datetime.now().isoformat()},
+            ReturnValues='ALL_OLD',
+        )['Item']
     except KeyError:
         return None, None
 
