@@ -7,8 +7,8 @@ jobs:
      - checkout
 
      - run:
-      name: Create requirements.txt
-      command: |
+       name: Create requirements.txt
+       command: |
         python3.6 -m venv env
         . env/bin/activate
         pip install pip-tools
@@ -16,50 +16,50 @@ jobs:
         pip-compile requirements/serverless.in
 
      - restore_cache:
-      name: Restore venv.
-      key: dev-python3.6.6-v1-{{ checksum requirements/dev.txt }}
+       name: Restore venv.
+       key: dev-python3.6.6-v1-{{ checksum requirements/dev.txt }}
 
      - run:
-      name: Install python dependencies.
-      command: |
+       name: Install python dependencies.
+       command: |
         python3.6 -m venv env
         . env/bin/activate
         pip install -r requirements/dev.txt
 
      - save_cache:
-      name: Save venv.
-      key: dev-python3.6.6-v1-{{ checksum requirements/dev.txt }}
-      paths:
+       name: Save venv.
+       key: dev-python3.6.6-v1-{{ checksum requirements/dev.txt }}
+       paths:
        - env
 
      - run:
-      name: pytest
-      command: |
+       name: pytest
+       command: |
         . env/bin/activate
         pytest
 
      - run:
-      name: Install and prepare serverless.
-      command: |
+       name: Install and prepare serverless.
+       command: |
         sudo npm i -g serverless
         npm install
         mkdir .serverless
 
      - restore_cache:
-      name: Restore serverless cache.
-      key: sls-python3.6.6-v1-{{ checksum requirements/serverless.txt }}
+       name: Restore serverless cache.
+       key: sls-python3.6.6-v1-{{ checksum requirements/serverless.txt }}
 
      - run:
-      name: Packge.
-      command: |
+       name: Packge.
+       command: |
         . env/bin/activate
         serverless package -s dev
 
      - save_cache:
-      name: Save serverless cache.
-      key: sls-python3.6.6-v1-{{ checksum requirements/serverless.txt }}
-      path: .serverless/.cache
+       name: Save serverless cache.
+       key: sls-python3.6.6-v1-{{ checksum requirements/serverless.txt }}
+       path: .serverless/.cache
 
      - run:
-      name: Deploy to dev.
-      command: serverless deploy -s dev
+       name: Deploy to dev.
+       command: serverless deploy -s dev
