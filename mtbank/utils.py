@@ -7,6 +7,7 @@ from lxml import html
 
 from constants import MTB_HOST
 from passwords.utils import get_credentials
+from serverless_utils import json_response, no_trailing_slash, redirect_response_302
 
 logger = logging.getLogger(__name__)
 
@@ -45,16 +46,13 @@ def overview(username, password):
 
 
 def _redirect_to_auth(*, next: str, reason: str):
-    return {
-        'statusCode': 302,
-        'headers': {
-            'Location': f'auth?next={next}&reason={reason}',
-        },
-        'body': '',
-    }
+    return redirect_response_302(f'auth?next={next}&reason={reason}')
 
 
+@no_trailing_slash
 def serverless_overview(event, context):
+    logger.debug(event)
+
     if 'headers' not in event or 'Cookie' not in event['headers']:
         logger.info('No cookie')
         return _redirect_to_auth(next='mtb', reason='no-password')
@@ -67,7 +65,4 @@ def serverless_overview(event, context):
 
     username, password = get_credentials(cookie['sessionId'].value, cookie['encryptKey'].value)
 
-    return {
-        'statusCode': 200,
-        'body': json.dumps(overview(username, password)),
-    }
+    return json_response(overview(username, password))

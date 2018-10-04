@@ -14,5 +14,5 @@ PASSWORDS_TABLE = f'passwords-{STAGE}'
 
 
 if STAGE:
-    # We are under lambda - log everything into stdout.
-    logging.basicConfig(level=logging.DEBUG)
+    # We are under lambda - log everything into LambdaLoggingHandler.
+    logging.getLogger().setLevel(logging.DEBUG)

@@ -9,6 +9,7 @@ from botocore.exceptions import ClientError
 from cryptography.fernet import Fernet
 
 from constants import SESSION_LIFETIME, STAGE, PASSWORDS_TABLE
+from serverless_utils import no_trailing_slash
 
 
 logger = logging.getLogger(__name__)
@@ -91,6 +92,7 @@ def store_credentials(encrypted_username: str, encrypted_password: str) -> str:
     return item_hash
 
 
+@no_trailing_slash
 def serverless_get_password(event, context):
     return {
         'statusCode': 200,
@@ -99,6 +101,7 @@ def serverless_get_password(event, context):
     }
 
 
+@no_trailing_slash
 def serverless_post_password(event, context):
     data = parse_qs(event['body'])
 

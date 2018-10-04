@@ -1,8 +1,9 @@
 import datetime
 import json
 from urllib.request import urlopen, Request
-
 from xml.etree import ElementTree as ET
+
+from serverless_utils import json_response
 
 
 def get_remote_data():
@@ -29,10 +30,5 @@ def get_data():
     return rates
 
 
-def sls_get_data(event, context):
-    return {
-        'isBase64Encoded': False,
-        "statusCode": 200,
-        "headers": {},
-        'body': json.dumps(get_data()),
-    }
+def serverless_get_data(event, context):
+    return json_response(get_data())

@@ -4,6 +4,7 @@ provider:
   name: aws
   runtime: python3.6
   region: eu-central-1
+  stage: ${opt:stage, 'dev'}
   environment:
     STAGE: ${self:provider.stage}
   iamRoleStatements:
@@ -26,6 +27,7 @@ package:
     - passwords/**
     - bcse/**
     - constants.py
+    - serverless_utils.py
   exclude:
     - ./**
 
@@ -37,7 +39,7 @@ custom:
 
 functions:
   bcse:
-    handler: bcse.utils.sls_get_data
+    handler: bcse.utils.serverless_get_data
     events:
       - http:
           path: bcse
