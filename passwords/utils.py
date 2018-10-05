@@ -97,7 +97,6 @@ def store_credentials(encrypted_username: str, encrypted_password: str) -> str:
     return item_hash
 
 
-@no_trailing_slash
 def serverless_get_password(event, context):
     return {
         'statusCode': 200,
@@ -106,7 +105,6 @@ def serverless_get_password(event, context):
     }
 
 
-@no_trailing_slash
 def serverless_post_password(event, context):
     data = parse_qs(event['body'])
 
