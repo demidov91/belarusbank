@@ -78,7 +78,7 @@ jobs:
      - run:
          name: Run tests.
          command: |
-           pip insatll pytest
+           pip install pytest
            python3.6 -m pytest tests_integration/production.py
 
 
