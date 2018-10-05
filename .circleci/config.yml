@@ -53,6 +53,10 @@ jobs:
          name: Prepare a package.
          command: |
            . env/bin/activate
+           if [ "${CIRCLE_BRANCH}" == "master" ]; then
+            export BASE_PATH="/"
+           fi
+
            serverless package -s "$CIRCLE_BRANCH"
 
      - save_cache:

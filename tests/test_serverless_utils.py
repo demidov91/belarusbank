@@ -1,13 +1,14 @@
 from unittest import mock
 
+import pytest
+
 from serverless_utils import (
     json_response,
-    no_trailing_slash,
     redirect_response_302,
 )
 
 
-def test_redirect_response_302():
+def test_redirect_response_302__structure():
     assert (
         redirect_response_302('http://nb.by/') ==
         {
@@ -18,6 +19,28 @@ def test_redirect_response_302():
             'body': '',
         }
     )
+
+
+@pytest.mark.parametrize('url,location', [
+    ('/', '/'),
+    ('/abc', '/abc'),
+    ('abc', 'abc'),
+    ('abc/def', 'abc/def'),
+])
+@mock.patch('serverless_utils.BASE_PATH', '/')
+def test_redirect_response_302__base_root_path(url, location):
+    assert redirect_response_302(url)['headers']['Location'] == location
+
+
+@pytest.mark.parametrize('url,location', [
+    ('/', '/branch-name/'),
+    ('/abc', '/branch-name/abc'),
+    ('abc', 'abc'),
+    ('abc/def', 'abc/def'),
+])
+@mock.patch('serverless_utils.BASE_PATH', '/branch-name/')
+def test_redirect_response_302__base_custom_path(url, location):
+    assert redirect_response_302(url)['headers']['Location'] == location
 
 
 @mock.patch('json.dumps', return_value='{"a": 1}')
@@ -31,28 +54,3 @@ def test_json_response(patched):
         'body': '{"a": 1}',
     }
     patched.assert_called_once_with(data,  ensure_ascii=False, indent=2)
-
-
-def test_no_trailing_slash__no_slash():
-    wrapped = mock.Mock()
-    wrapper = no_trailing_slash(wrapped)
-
-    event = {'requestContext': {'path': '/some/url'}}
-    context = mock.Mock()
-
-    wrapper(event, context)
-
-    wrapped.assert_called_once_with(event, context)
-
-
-@mock.patch('serverless_utils.redirect_response_302', return_value=42)
-def test_no_trailing_slash__with_slash(patched_redirect):
-    wrapped = mock.Mock()
-    wrapper = no_trailing_slash(wrapped)
-
-    event = {'requestContext': {'path': '/some/url/'}}
-    context = mock.Mock()
-
-    assert wrapper(event, context) == 42
-
-    patched_redirect.assert_called_once_with('/some/url')

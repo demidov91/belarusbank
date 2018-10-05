@@ -1,6 +1,7 @@
 import logging
 import os
 
+BASE_PATH = os.environ.get('BASE_PATH', '/')
 
 BB_HOST = 'https://ibank.asb.by'
 MTB_HOST = 'https://new.mybank.by'
