@@ -3,7 +3,7 @@ from http.cookies import SimpleCookie
 
 from mtbank import utils as mtbank_utils
 from passwords.utils import get_credentials
-from serverless_utils import redirect_response_302, no_trailing_slash, json_response
+from serverless_utils import redirect_response_302, json_response
 
 
 logger = logging.getLogger(__name__)
@@ -13,7 +13,6 @@ def _redirect_to_auth(*, next: str, reason: str):
     return redirect_response_302(f'auth?next={next}&reason={reason}')
 
 
-@no_trailing_slash
 def overview(event, context):
     if 'headers' not in event or 'Cookie' not in event['headers']:
         logger.info('No cookie')

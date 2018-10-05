@@ -1,13 +1,9 @@
-import json
-
 from urllib.parse import parse_qs
 
 from constants import SESSION_LIFETIME
 from passwords import utils as passwords_utils
-from serverless_utils import no_trailing_slash, json_response
 
 
-@no_trailing_slash
 def get_password(event, context):
     return {
         'statusCode': 200,
@@ -16,7 +12,6 @@ def get_password(event, context):
     }
 
 
-@no_trailing_slash
 def post_password(event, context):
     data = parse_qs(event['body'])
 
