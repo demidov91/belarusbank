@@ -12,9 +12,9 @@ def test_bcse():
 
 def test_mtbank__no_cookie():
     with urlopen(BASE_URL + MTBANK_URL) as response:
-        assert response.geturl() == BASE_URL + '/auth?next=mtb&reason=no-password'
+        assert response.geturl() == BASE_URL + '/auth?next=/mtb&reason=no-password'
 
 
 def test_mtbank__railing_slash():
     with urlopen(BASE_URL + MTBANK_URL + '/') as response:
-        assert response.geturl() == BASE_URL + '/auth?next=mtb&reason=no-password'
+        assert response.geturl() == BASE_URL + '/auth?next=/mtb&reason=no-password'
