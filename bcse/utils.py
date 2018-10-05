@@ -1,5 +1,4 @@
 import datetime
-import json
 from urllib.request import urlopen, Request
 from xml.etree import ElementTree as ET
 
