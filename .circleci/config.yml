@@ -68,3 +68,27 @@ jobs:
      - run:
          name: Deploy to aws.
          command: serverless deploy -s "$CIRCLE_BRANCH"
+
+  integration_test:
+    docker:
+     - image: circleci/python:3.6.6
+    steps:
+     - checkout
+
+     - run:
+         name: Run tests.
+         command: |
+           pip insatll pytest
+           python3.6 -m pytest tests_integration/production.py
+
+
+workflow:
+  default:
+    jobs:
+     - build
+     - integration_test:
+         requires:
+          - build
+         filters:
+           branches:
+             only: master

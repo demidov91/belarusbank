@@ -18,6 +18,7 @@ provider:
       - dynamodb:PutItem
       - dynamodb:UpdateItem
       - dynamodb:DeleteItem
+      - dynamodb:BatchWriteItem
     Resource:
       - "Fn::GetAtt": [ PasswordsTable, Arn ]
 
@@ -48,25 +49,31 @@ functions:
           method: get
 
   mtbank:
-    handler: mtbank.utils.serverless_overview
+    handler: mtbank.serverless.overview
     events:
       - http:
           path: mtb
           method: get
 
   auth-get:
-    handler: passwords.utils.serverless_get_password
+    handler: passwords.serverless.get_password
     events:
       - http:
           path: auth
           method: get
 
   auth-post:
-    handler: passwords.utils.serverless_post_password
+    handler: passwords.serverless.post_password
     events:
       - http:
           path: auth
           method: post
+
+  clear-db:
+    handler: passwords.serverless.clear_sessions
+    events:
+      - schedule: cron(0 */3 * * ? *)
+
 
 resources:
   Resources:

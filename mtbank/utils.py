@@ -1,12 +1,10 @@
 import logging
-from http.cookies import SimpleCookie
 
 import requests
 from lxml import html
 
 from constants import MTB_HOST
-from passwords.utils import get_credentials
-from serverless_utils import json_response, redirect_response_302
+
 
 logger = logging.getLogger(__name__)
 
@@ -42,26 +40,3 @@ def overview(username, password):
         'cards': cards,
         'depo': depo,
     }
-
-
-def _redirect_to_auth(*, next: str, reason: str):
-    return redirect_response_302(f'/auth?next={next}&reason={reason}')
-
-
-def serverless_overview(event, context):
-    if 'headers' not in event or 'Cookie' not in event['headers']:
-        logger.info('No cookie')
-        return _redirect_to_auth(next='/mtb', reason='no-password')
-
-    cookie = SimpleCookie(event['headers']['Cookie'])
-
-    if 'sessionId' not in cookie or 'encryptKey' not in cookie:
-        logger.info('No session')
-        return _redirect_to_auth(next='/mtb', reason='no-password')
-
-    username, password = get_credentials(cookie['sessionId'].value, cookie['encryptKey'].value)
-
-    if not (username and password):
-        return _redirect_to_auth(next='/mtb', reason='no-password')
-
-    return json_response(overview(username, password))
