@@ -23,7 +23,7 @@ def get_credentials(session_id: str, encrypt_key: str) -> Tuple[Optional[str], O
             UpdateExpression='SET last_accessed_at = :current_time',
             ExpressionAttributeValues={':current_time': datetime.datetime.now().isoformat()},
             ReturnValues='ALL_OLD',
-        )['Item']
+        )['Attributes']
     except KeyError:
         return None, None
 

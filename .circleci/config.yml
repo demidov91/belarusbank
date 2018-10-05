@@ -57,7 +57,7 @@ jobs:
 
      - save_cache:
          name: Save serverless cache.
-         key: sls-python3.6.6-v1-{{ "checksum requirements/serverless.txt" }}
+         key: sls-python3.6.6-v1-{{ checksum "requirements/serverless.txt" }}
          paths:
           - .serverless/.cache
 
