@@ -1,4 +1,3 @@
-import json
 import logging
 from http.cookies import SimpleCookie
 
@@ -62,5 +61,8 @@ def serverless_overview(event, context):
         return _redirect_to_auth(next='mtb', reason='no-password')
 
     username, password = get_credentials(cookie['sessionId'].value, cookie['encryptKey'].value)
+
+    if not (username and password):
+        return _redirect_to_auth(next='mtb', reason='no-password')
 
     return json_response(overview(username, password))
