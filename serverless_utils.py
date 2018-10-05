@@ -1,5 +1,8 @@
 import json
+import logging
 from functools import wraps
+
+logger = logging.getLogger(__name__)
 
 
 def redirect_response_302(url: str) -> dict:
@@ -22,6 +25,8 @@ def json_response(data: dict) -> dict:
 def no_trailing_slash(wrapped):
     @wraps(wrapped)
     def wrapper(event, context):
+        logger.debug(event)
+
         if (
             'requestContext' in event and
             'path' in event['requestContext'] and
