@@ -9,7 +9,6 @@ from botocore.exceptions import ClientError
 from cryptography.fernet import Fernet
 
 from constants import SESSION_LIFETIME, STAGE, PASSWORDS_TABLE
-from serverless_utils import no_trailing_slash
 
 
 logger = logging.getLogger(__name__)

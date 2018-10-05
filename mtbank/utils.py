@@ -6,7 +6,7 @@ from lxml import html
 
 from constants import MTB_HOST
 from passwords.utils import get_credentials
-from serverless_utils import json_response, no_trailing_slash, redirect_response_302
+from serverless_utils import json_response, redirect_response_302
 
 logger = logging.getLogger(__name__)
 
