@@ -17,7 +17,7 @@ jobs:
 
      - restore_cache:
          name: Restore venv.
-         key: dev-python3.6.6-v1-{{ checksum "requirements/dev.txt" }}
+         key: python3.6.6-v1-{{ checksum "requirements/dev.txt" }}
 
      - run:
          name: Install python dependencies.
@@ -28,7 +28,7 @@ jobs:
 
      - save_cache:
          name: Save venv.
-         key: dev-python3.6.6-v1-{{ checksum "requirements/dev.txt" }}
+         key: python3.6.6-v1-{{ checksum "requirements/dev.txt" }}
          paths:
           - env
 
@@ -50,10 +50,10 @@ jobs:
          key: sls-python3.6.6-v1-{{ checksum "requirements/serverless.txt" }}
 
      - run:
-         name: Packge.
+         name: Prepare a package.
          command: |
            . env/bin/activate
-           serverless package -s dev
+           serverless package -s "$CIRCLE_BRANCH"
 
      - save_cache:
          name: Save serverless cache.
@@ -62,5 +62,5 @@ jobs:
           - .serverless/.cache
 
      - run:
-         name: Deploy to dev.
-         command: serverless deploy -s dev
+         name: Deploy to aws.
+         command: serverless deploy -s "$CIRCLE_BRANCH"
