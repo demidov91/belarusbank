@@ -1,15 +1,14 @@
 import datetime
 import logging
 from typing import Tuple, Optional
-from urllib.parse import parse_qs
 from uuid import uuid4
 
 import boto3
+from boto3.dynamodb.conditions import Attr
 from botocore.exceptions import ClientError
 from cryptography.fernet import Fernet
 
-from constants import SESSION_LIFETIME, STAGE, PASSWORDS_TABLE
-from serverless_utils import no_trailing_slash
+from constants import STAGE, PASSWORDS_TABLE, SESSION_LIFETIME
 
 
 logger = logging.getLogger(__name__)
@@ -84,7 +83,6 @@ def _get_passwords_table():
     return db.Table(PASSWORDS_TABLE)
 
 
-
 def store_credentials(encrypted_username: str, encrypted_password: str) -> str:
     table = _get_passwords_table()
     item_hash = str(uuid4())
@@ -97,27 +95,19 @@ def store_credentials(encrypted_username: str, encrypted_password: str) -> str:
     return item_hash
 
 
-@no_trailing_slash
-def serverless_get_password(event, context):
-    return {
-        'statusCode': 200,
-        'headers': {'Content-Type': 'text/html', },
-        'body': open('passwords/simple_password_form.html', mode='r').read(),
-    }
+def clear_sessions():
+    table = _get_passwords_table()
+    id_list = [
+        x['id'] for x in
+        table.scan(FilterExpression=Attr('last_accessed_at').lt(
+            (datetime.datetime.now() - datetime.timedelta(seconds=SESSION_LIFETIME)).isoformat()
+        ))['Items']
+    ]
 
+    logger.info('%d items gonna be cleared.', len(id_list))
 
-@no_trailing_slash
-def serverless_post_password(event, context):
-    data = parse_qs(event['body'])
+    with table.batch_writer() as batch:
+        for item_id in id_list:
+            batch.delete_item({'id': item_id})
 
-    record_hash, encrypted_key = save_credentials(data['username'][0], data['password'][0])
-    return {
-        'statusCode': 302,
-        'headers': {
-            'Set-Cookie': f'sessionId={record_hash}; Max-Age={SESSION_LIFETIME};',
-            'Set-cookie': f'encryptKey={encrypted_key}; Max-Age={SESSION_LIFETIME};',
-            'Location': event['queryStringParameters']['next'],
-        },
-        'body': '',
-
-    }
+    logger.info('%d items were cleared.', len(id_list))
