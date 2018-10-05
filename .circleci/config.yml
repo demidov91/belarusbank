@@ -82,7 +82,7 @@ jobs:
            python3.6 -m pytest tests_integration/production.py
 
 
-workflow:
+workflows:
   default:
     jobs:
      - build
