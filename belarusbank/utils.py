@@ -7,8 +7,7 @@ from typing import Iterable, Optional, Tuple
 from lxml import html
 from requests import Session
 
-from constants import BB_HOST
-from settings import BASE_DIR
+from constants import BASE_DIR, BB_HOST
 
 logger = logging.getLogger(__name__)
 

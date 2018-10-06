@@ -25,9 +25,10 @@ provider:
 
 package:
   include:
+    - bcse/**
+    - belarusbank/**
     - mtbank/**
     - passwords/**
-    - bcse/**
     - constants.py
     - serverless_utils.py
     - keys.json
