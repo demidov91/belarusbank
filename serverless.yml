@@ -7,7 +7,7 @@ provider:
   stage: ${opt:stage, 'dev'}
   environment:
     STAGE: ${self:provider.stage}
-    BASE_URL: ${env:BASE_URL, "/${self:provider.stage}/"}
+    BASE_PATH: ${env:BASE_URL, "/${self:provider.stage}/"}
   iamRoleStatements:
   - Effect: Allow
     Action:

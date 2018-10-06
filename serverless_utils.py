@@ -1,6 +1,5 @@
 import json
 import logging
-from functools import wraps
 
 from constants import BASE_PATH
 
