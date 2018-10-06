@@ -17,7 +17,7 @@ def test_bcse():
 ))
 def test_mtbank__no_cookie(url):
     with urlopen(url) as response:
-        assert response.geturl() == f'{BASE_URL}/auth?next=/mtb&reason=no-password'
+        assert response.geturl() == f'{BASE_URL}/auth?service=mtb&reason=no-password'
 
 
 @pytest.mark.parametrize('url', (
@@ -26,4 +26,4 @@ def test_mtbank__no_cookie(url):
 ))
 def test_belarusbank__no_cookie(url):
     with urlopen(url) as response:
-        assert response.geturl() == f'{BASE_URL}/auth?next=/bb&reason=no-password'
+        assert response.geturl() == f'{BASE_URL}/auth?service=bb&reason=no-password'
