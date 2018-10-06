@@ -9,7 +9,7 @@ from serverless_utils import (
 )
 
 
-def test_redirect_response_302__structure():
+def test_redirect_response_302__simple_structure():
     assert (
         redirect_response_302('http://nb.by/') ==
         {
@@ -18,6 +18,15 @@ def test_redirect_response_302__structure():
                 'Location': 'http://nb.by/',
             },
             'body': '',
+        }
+    )
+
+
+def test_redirect_response_302__headers():
+    assert (
+        redirect_response_302('http://nb.by/', headers={'Auth': 'anything'})['headers'] == {
+            'Auth': 'anything',
+            'Location': 'http://nb.by/',
         }
     )
 
@@ -48,7 +57,7 @@ def test_redirect_response_302__base_custom_path(url, location):
 def test_redirect_to_auth(patched):
     assert redirect_to_auth(service='service-name', reason='cause-I-feel-like-it') == '42'
 
-    patched.assert_called_once_with('/auth?service=/service-name&reason=cause-I-feel-like-it')
+    patched.assert_called_once_with('/auth?service=service-name&reason=cause-I-feel-like-it')
 
 
 @mock.patch('json.dumps', return_value='{"a": 1}')
