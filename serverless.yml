@@ -55,6 +55,13 @@ functions:
           path: mtb
           method: get
 
+  belarusbank:
+    handler: belarusbank.serverless.overview
+    events:
+      - http:
+          path: mtb
+          method: get
+
   auth-get:
     handler: passwords.serverless.get_password
     events:

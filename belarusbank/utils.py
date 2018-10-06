@@ -2,6 +2,7 @@ import json
 import logging
 import os
 import re
+from typing import Iterable, Optional, Tuple
 
 from lxml import html
 from requests import Session
@@ -17,7 +18,7 @@ def get_key(number: str) -> str:
         return json.load(f).get(number)
 
 
-def log_in():
+def log_in() -> Optional[Tuple[Session, str]]:
     s = Session()
     response = s.get(BB_HOST + '/wps/portal/ibank/')
     if response.status_code >= 400:
@@ -49,18 +50,22 @@ def log_in():
     logger.debug('Login, step 2 response code is {}'.format(login_step_two_response.status_code))
     if login_step_two_response.status_code >= 400:
         return None
+
     return s, login_step_two_response.text.encode('utf-8')
 
-def from_index_to_cards(s, index_page):
+
+def from_index_to_cards(s, index_page) -> Optional[Tuple[Session, str]]:
     doc = html.fromstring(index_page)
-    cards_page_url = doc.cssselect('#leftNavMenu>ul>li')[0].cssselect('a')[0].get('href')
+    cards_page_url = doc.cssselect('#top_link_1 a')[0].get('href')
     cards_page_response = s.get(BB_HOST + cards_page_url)
     logger.debug('Cards page response status is {}'.format(cards_page_response.status_code))
     if cards_page_response.status_code >= 400:
         return None
+
     return s, cards_page_response.text.encode('utf-8')
-    
-def parse_for_cards_balance(cards_page):
+
+
+def parse_for_cards_balance(cards_page) -> Iterable[dict]:
     doc = html.fromstring(cards_page)
     card_accounts = doc.cssselect('.wpsPortletBody .cc_container table.accountTable>tbody>tr')
     for account in card_accounts:
@@ -75,14 +80,16 @@ def parse_for_cards_balance(cards_page):
             logger.exception('Fail')
 
 
-def get_bb_cards_balance() -> list:
+def get_bb_cards_balance() -> Optional[Iterable[dict]]:
     """
     Makes, actually, all the application work.
     """
     session_and_content = log_in()
     if session_and_content is None:
         return None
+
     session_and_content = from_index_to_cards(*session_and_content)
     if session_and_content is None:
         return None
+
     return parse_for_cards_balance(session_and_content[1])
