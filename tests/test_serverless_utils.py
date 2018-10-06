@@ -46,9 +46,9 @@ def test_redirect_response_302__base_custom_path(url, location):
 
 @mock.patch('serverless_utils.redirect_response_302', return_value='42')
 def test_redirect_to_auth(patched):
-    assert redirect_to_auth(next='/any/url/', reason='cause-I-feel-like-it') == '42'
+    assert redirect_to_auth(service='service-name', reason='cause-I-feel-like-it') == '42'
 
-    patched.assert_called_once_with('/auth?next=/any/url/&reason=cause-I-feel-like-it')
+    patched.assert_called_once_with('/auth?service=/service-name&reason=cause-I-feel-like-it')
 
 
 @mock.patch('json.dumps', return_value='{"a": 1}')

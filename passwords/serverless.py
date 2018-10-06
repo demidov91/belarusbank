@@ -14,6 +14,7 @@ def get_password(event, context):
 
 def post_password(event, context):
     data = parse_qs(event['body'])
+    service_name = event['queryStringParameters']['service']
 
     record_hash, encrypted_key = passwords_utils.save_credentials(
         data['username'][0],
@@ -22,9 +23,9 @@ def post_password(event, context):
     return {
         'statusCode': 302,
         'headers': {
-            'Set-Cookie': f'sessionId={record_hash}; Max-Age={SESSION_LIFETIME};',
-            'Set-cookie': f'encryptKey={encrypted_key}; Max-Age={SESSION_LIFETIME};',
-            'Location': event['queryStringParameters']['next'],
+            'Set-Cookie': f'{service_name}-sessionId={record_hash}; Max-Age={SESSION_LIFETIME};',
+            'Set-cookie': f'{service_name}-encryptKey={encrypted_key}; Max-Age={SESSION_LIFETIME};',
+            'Location': f'/{service_name}',
         },
         'body': '',
     }

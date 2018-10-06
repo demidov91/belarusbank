@@ -13,7 +13,7 @@ logger = logging.getLogger(__name__)
 
 
 def get_key(number: str) -> str:
-    with open(os.path.join(BASE_DIR, 'keys.json'), 'r+') as f:
+    with open(os.path.join(BASE_DIR, 'keys.json'), 'r') as f:
         return json.load(f).get(number)
 
 

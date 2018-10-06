@@ -25,7 +25,7 @@ def bb_balance():
 
 @app.route('/balance/' + EXTREMELY_SIMPLE_KEY + '/mtb/')
 def mtb_balance():
-    return jsonify(mtb_overview(*get_credentials(MTB_USERNAME, MTB_PASSWORD)))
+    return jsonify(mtb_overview(MTB_USERNAME, MTB_PASSWORD))
 
 
 @app.route('/bcse/')

@@ -5,9 +5,9 @@ from serverless_utils import json_response, redirect_to_auth
 
 
 def overview(event, context):
-    credentials = get_cedentials_by_serveless_request(event)
+    credentials = get_cedentials_by_serveless_request(event, provider='bb')
     if credentials is None:
-        return redirect_to_auth(next='/bb', reason='no-password')
+        return redirect_to_auth(service='bb', reason='no-password')
 
     return json_response({
         'cards': tuple(bb_utils.get_bb_cards_balance(*credentials)),

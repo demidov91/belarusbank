@@ -56,6 +56,8 @@ jobs:
            . env/bin/activate
            if [ "${CIRCLE_BRANCH}" == "master" ]; then
             export BASE_PATH="/"
+           else
+            export BASE_PATH="/${CIRCLE_BRANCH}/"
            fi
 
            serverless package -s "$CIRCLE_BRANCH"

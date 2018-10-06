@@ -9,8 +9,8 @@ logger = logging.getLogger(__name__)
 
 
 def overview(event, context):
-    credentials = get_cedentials_by_serveless_request(event)
+    credentials = get_cedentials_by_serveless_request(event, provider='mtb')
     if credentials is None:
-        return redirect_to_auth(next='/mtb', reason='no-password')
+        return redirect_to_auth(service='mtb', reason='no-password')
 
     return json_response(mtbank_utils.overview(*credentials))
