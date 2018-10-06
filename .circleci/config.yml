@@ -44,6 +44,7 @@ jobs:
            sudo npm i -g serverless
            npm install
            mkdir .serverless
+           echo $BB_KEYS > keys.json
 
      - restore_cache:
          name: Restore serverless cache.
@@ -53,10 +54,6 @@ jobs:
          name: Prepare a package.
          command: |
            . env/bin/activate
-           if [ "${CIRCLE_BRANCH}" == "master" ]; then
-            export BASE_PATH="/"
-           fi
-
            serverless package -s "$CIRCLE_BRANCH"
 
      - save_cache:
@@ -67,7 +64,13 @@ jobs:
 
      - run:
          name: Deploy to aws.
-         command: serverless deploy -s "$CIRCLE_BRANCH"
+         command: |
+          if [ "${CIRCLE_BRANCH}" == "master" ]; then
+            export BASE_PATH="/"
+           else
+            export BASE_PATH="/${CIRCLE_BRANCH}/"
+           fi
+          serverless deploy -s "$CIRCLE_BRANCH"
 
   integration_test:
     docker:
