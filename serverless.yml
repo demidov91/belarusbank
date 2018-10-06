@@ -7,7 +7,7 @@ provider:
   stage: ${opt:stage, 'dev'}
   environment:
     STAGE: ${self:provider.stage}
-    BASE_URL: ${env:BASE_URL, "/${self:provider.stage}/"}
+    BASE_PATH: ${env:BASE_PATH}
   iamRoleStatements:
   - Effect: Allow
     Action:
@@ -25,11 +25,13 @@ provider:
 
 package:
   include:
+    - bcse/**
+    - belarusbank/**
     - mtbank/**
     - passwords/**
-    - bcse/**
     - constants.py
     - serverless_utils.py
+    - keys.json
   exclude:
     - ./**
 
@@ -53,6 +55,13 @@ functions:
     events:
       - http:
           path: mtb
+          method: get
+
+  belarusbank:
+    handler: belarusbank.serverless.overview
+    events:
+      - http:
+          path: bb
           method: get
 
   auth-get:
