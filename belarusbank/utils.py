@@ -8,7 +8,7 @@ from lxml import html
 from requests import Session
 
 from constants import BB_HOST
-from settings import BB_USERNAME, BB_PASSWORD, BASE_DIR
+from settings import BASE_DIR
 
 logger = logging.getLogger(__name__)
 
@@ -18,7 +18,7 @@ def get_key(number: str) -> str:
         return json.load(f).get(number)
 
 
-def log_in() -> Optional[Tuple[Session, str]]:
+def log_in(username: str, password: str) -> Optional[Tuple[Session, str]]:
     s = Session()
     response = s.get(BB_HOST + '/wps/portal/ibank/')
     if response.status_code >= 400:
@@ -28,8 +28,8 @@ def log_in() -> Optional[Tuple[Session, str]]:
 
     action = doc.cssselect('form.loginForm')[0].get('action')
     login_step_one_response = s.post(BB_HOST + action, data={
-        'bbIbUseridField': BB_USERNAME,
-        'bbIbPasswordField': BB_PASSWORD,
+        'bbIbUseridField': username,
+        'bbIbPasswordField': password,
         'bbIbLoginAction': 'in-action',
     })
     logger.debug(login_step_one_response)
@@ -80,11 +80,11 @@ def parse_for_cards_balance(cards_page) -> Iterable[dict]:
             logger.exception('Fail')
 
 
-def get_bb_cards_balance() -> Optional[Iterable[dict]]:
+def get_bb_cards_balance(username: str, password: str) -> Optional[Iterable[dict]]:
     """
     Makes, actually, all the application work.
     """
-    session_and_content = log_in()
+    session_and_content = log_in(username, password)
     if session_and_content is None:
         return None
 

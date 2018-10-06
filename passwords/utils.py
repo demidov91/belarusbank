@@ -1,5 +1,6 @@
 import datetime
 import logging
+from http.cookies import SimpleCookie
 from typing import Tuple, Optional
 from uuid import uuid4
 
@@ -93,6 +94,25 @@ def store_credentials(encrypted_username: str, encrypted_password: str) -> str:
         'last_accessed_at': datetime.datetime.now().isoformat(),
     })
     return item_hash
+
+
+def get_cedentials_by_serveless_request(event: dict) -> Optional[Tuple[str, str]]:
+    if 'headers' not in event or 'Cookie' not in event['headers']:
+        logger.info('No cookie')
+        return None
+
+    cookie = SimpleCookie(event['headers']['Cookie'])
+
+    if 'sessionId' not in cookie or 'encryptKey' not in cookie:
+        logger.info('No session')
+        return None
+
+    username, password = get_credentials(cookie['sessionId'].value, cookie['encryptKey'].value)
+
+    if not (username and password):
+        return None
+
+    return username, password
 
 
 def clear_sessions():

@@ -59,7 +59,7 @@ functions:
     handler: belarusbank.serverless.overview
     events:
       - http:
-          path: mtb
+          path: bb
           method: get
 
   auth-get:

@@ -20,6 +20,10 @@ def redirect_response_302(url: str) -> dict:
     }
 
 
+def redirect_to_auth(*, next: str, reason: str):
+    return redirect_response_302(f'/auth?next={next}&reason={reason}')
+
+
 def json_response(data: dict) -> dict:
     return {
         'statusCode': 200,
