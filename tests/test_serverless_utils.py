@@ -3,7 +3,9 @@ from unittest import mock
 import pytest
 
 from serverless_utils import (
+    fix_cookie,
     json_response,
+    parse_cookie,
     redirect_response_302,
     redirect_to_auth,
 )
@@ -68,6 +70,46 @@ def test_json_response(patched):
 
     assert result == {
         'statusCode': 200,
+        'headers': {},
         'body': '{"a": 1}',
     }
     patched.assert_called_once_with(data,  ensure_ascii=False, indent=2)
+
+
+def test_parse_cookie__positive():
+    assert parse_cookie({'headers': {'Cookie': 'a=1; b=2;c=3;  d=4;', }, }) == {
+        'a': '1',
+        'b': '2',
+        'c': '3',
+        'd': '4',
+    }
+
+
+def test_parse_cookie__no_headers():
+    assert parse_cookie({'something': {'Cookie': 'a=1; b=2;c=3;  d=4;', }, }) is None
+
+
+def test_parse_cookie__no_cookie():
+    assert parse_cookie({'headers': {'Mookie': 'a=1; b=2;c=3;  d=4;', }, }) is None
+
+
+@pytest.mark.parametrize('cookie,provider,expected', [
+    (
+        {'s1-sessionId': '1', 's1-encryptKey': '2', 's2-sessionId': '3', 's2-encryptKey': '4', },
+        's1',
+        {'session_id': '1', 'encrypt_key': '2', 's2-sessionId': '3', 's2-encryptKey': '4', },
+    ),
+    (
+        {'s1-sessionId': '1', 's1-encryptKey': '2', 's2-sessionId': '3', 's2-encryptKey': '4', },
+        's2',
+        {'session_id': '3', 'encrypt_key': '4', 's1-sessionId': '1', 's1-encryptKey': '2', },
+    ),
+    (
+        {'s1-sessionId': '1', 's1-encryptKey': '2', 'any': 'thing', },
+        's1',
+        {'session_id': '1', 'encrypt_key': '2', 'any': 'thing', },
+    ),
+    (None, 's1', None),
+])
+def test_fix_cookie(cookie, provider, expected):
+    assert fix_cookie(cookie, provider=provider) == expected
