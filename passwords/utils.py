@@ -98,8 +98,8 @@ def store_credentials(encrypted_username: str, encrypted_password: str) -> str:
 def get_cedentials_by_cookie_data(cookie_data: dict) -> Optional[Tuple[str, str]]:
     if (
         not cookie_data or
-        'session_id' not in cookie_data or
-        'encrypt_key' not in cookie_data
+        not cookie_data.get('session_id') or
+        not cookie_data.get('encrypt_key')
     ):
         logger.info('No cookie')
         return None
