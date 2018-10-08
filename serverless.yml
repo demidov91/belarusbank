@@ -49,6 +49,7 @@ functions:
       - http:
           path: bcse
           method: get
+      - schedule: cron(*/15 7-12 ? * MON-FRI *)
 
   mtbank:
     handler: mtbank.serverless.overview
