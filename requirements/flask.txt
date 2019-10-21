@@ -27,4 +27,4 @@ requests==2.19.1
 s3transfer==0.1.13        # via boto3
 six==1.11.0               # via cryptography, python-dateutil
 urllib3==1.23             # via botocore, requests
-werkzeug==0.14.1          # via flask
+werkzeug==0.15.3          # via flask
