@@ -4,26 +4,28 @@
 #
 #    pip-compile --output-file requirements-flask.txt requirements-flask.in
 #
-asn1crypto==0.24.0        # via cryptography
-boto3==1.9.16
+boto3==1.9.16             # via -r ./mtbank.in
 botocore==1.12.16         # via boto3, s3transfer
 certifi==2018.8.24        # via requests
 cffi==1.11.5              # via cryptography
 chardet==3.0.4            # via requests
 click==7.0                # via flask
-cryptography==2.3.1
-cssselect==1.0.3
+cryptography==3.2         # via -r ./mtbank.in
+cssselect==1.0.3          # via -r ./belarusbank.in, -r ./mtbank.in
 docutils==0.14            # via botocore
-flask==1.0.2
-idna==2.7                 # via cryptography, requests
+enum34==1.1.10            # via cryptography
+flask==1.0.2              # via -r flask.in
+futures==3.3.0            # via s3transfer
+idna==2.7                 # via requests
+ipaddress==1.0.23         # via cryptography
 itsdangerous==0.24        # via flask
 jinja2==2.10              # via flask
 jmespath==0.9.3           # via boto3, botocore
-lxml==4.2.5
+lxml==4.2.5               # via -r ./belarusbank.in, -r ./mtbank.in
 markupsafe==1.0           # via jinja2
 pycparser==2.19           # via cffi
 python-dateutil==2.7.3    # via botocore
-requests==2.19.1
+requests==2.19.1          # via -r ./belarusbank.in, -r ./mtbank.in
 s3transfer==0.1.13        # via boto3
 six==1.11.0               # via cryptography, python-dateutil
 urllib3==1.23             # via botocore, requests
